@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const mysql = require("mysql2");
+const cors = require("cors"); // Важно добавить пакет CORS
 
 const connection = mysql.createConnection({
   host: "localhost",
@@ -10,6 +11,7 @@ const connection = mysql.createConnection({
 });
 
 app.use(express.json());
+app.use(cors()); // Используйте CORS, чтобы разрешить запросы с другого источника
 
 app.post("/api/form_quest_users", (req, res) => {
   const { lastname, firstname, middlename, email, selectedItem } = req.body;
@@ -35,6 +37,8 @@ const port = 3000;
 app.listen(port, () => {
   console.log("Сервер запущен на порту " + port);
 });
+
+
 
 
 

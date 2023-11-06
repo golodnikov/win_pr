@@ -1,14 +1,14 @@
 <template>
-  <h1>Заполните форму</h1>
   <div class="center-content">
     <v-form v-model="valid">
       <v-container>
+        <h1>Заполните форму</h1>
         <v-row>
           <v-col cols="12" md="12">
             <v-text-field
               v-model="lastname"
               :counter="10"
-              label="Last name"
+              label="Фомилия"
               hide-details
               required
             ></v-text-field>
@@ -17,7 +17,7 @@
             <v-text-field
               v-model="firstname"
               :counter="10"
-              label="First name"
+              label="Имя"
               required
               hide-details
             ></v-text-field>
@@ -26,7 +26,7 @@
             <v-text-field
               v-model="middlename"
               :counter="10"
-              label="Middle name"
+              label="Отчество"
               hide-details
               required
             ></v-text-field>
@@ -44,7 +44,7 @@
             <v-combobox
               clearable
               v-model="selectedItem"
-              :items="['Монтаж', 'Демонтаж', 'Замер', 'Изготовление маскитных сеток', 'Замена стекло-пакетов', 'Ремонт фурнетуры']"
+              :items="['Монтаж', 'Демонтаж', 'Замер', 'Изготовление маскитных сеток', 'Замена стекло-пакетов', 'Ремонт фурнитуры']"
               label="Выберите услугу"
               variant="solo"
             ></v-combobox>
@@ -57,18 +57,17 @@
             type="submit"
             block
             class="mt-2"
-            text="Submit"
+            text="Отправить"
             @click="submitForm"
           ></v-btn>
         </v-col>
       </v-container>
       <v-alert v-if="errorMessage" type="error" @click="closeErrorMessage">
-          {{ errorMessage }}
+        {{ errorMessage }}
       </v-alert>
     </v-form>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -81,6 +80,7 @@ export default {
       email: "",
       selectedItem: null,
       errorMessage: "",
+      loading: false,
     };
   },
   methods: {
@@ -97,6 +97,7 @@ export default {
     async submitForm() {
       this.checkForm();
       if (!this.errorMessage) {
+        this.loading = true;
         try {
           const response = await fetch("/api/form_quest_users", {
             method: "POST",
@@ -113,7 +114,6 @@ export default {
           });
 
           if (response.ok) {
-            // Обработка успешной отправки данных
             alert("Заявка принята");
             this.lastname = "";
             this.firstname = "";
@@ -121,12 +121,13 @@ export default {
             this.email = "";
             this.selectedItem = null;
           } else {
-            // Обработка ошибки
             this.errorMessage = "Произошла ошибка при отправке данных";
           }
         } catch (error) {
           console.error("Ошибка при отправке данных на сервер:", error);
           this.errorMessage = "Произошла ошибка при отправке данных";
+        } finally {
+          this.loading = false;
         }
       }
     },
@@ -142,4 +143,3 @@ export default {
   height: 100vh;
 }
 </style>
-
